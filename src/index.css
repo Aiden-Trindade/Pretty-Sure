@@ -1,24 +1,189 @@
-:root {
-  --bg: #0b0c10;
-  --surface: #16181d;
-  --text: #f4f4f5;
-  --muted: #a1a1aa;
-  --accent: #22c55e;
-  font-family: system-ui, sans-serif;
-  color: var(--text);
-  background: var(--bg);
-}
-* { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; }
-a { color: inherit; text-decoration: none; }
+/* Pretty Sure: a betting-shop slip.
+   Two inks per mode: "print" is the pre-printed form, "ink" is what you fill in. */
 
-.navbar {
+:root {
+  --paper: #f6f1e4;
+  --print: #8a2a1f;
+  --ink: #1d2a4a;
+  --print-faint: color-mix(in srgb, var(--print) 12%, transparent);
+
+  --font-print: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+  --font-ink: 'Courier Prime', 'Courier New', monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #16130f;
+    --print: #d9714f;
+    --ink: #ece4d2;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ink);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+a { color: inherit; text-decoration: none; }
+h1, h2, h3 { margin: 0; }
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+/* ---------- Printed text (the form itself) ---------- */
+
+.label {
+  font-family: var(--font-print);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--print);
+}
+
+.title {
+  font-family: var(--font-print);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--print);
+}
+
+.fine-print {
+  font-family: var(--font-print);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--print);
+}
+
+/* ---------- Filled-in text (your entries) ---------- */
+
+.entry {
+  font-family: var(--font-ink);
+  font-size: 16px;
+  color: var(--ink);
+}
+
+/* ---------- The slip ---------- */
+
+.slip { margin-bottom: 24px; }
+
+.slip-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  background: var(--surface);
+  align-items: baseline;
+  border-bottom: 2px solid var(--print);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
 }
-.brand { font-weight: 700; color: var(--accent); }
-.container { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
-.nav-links { display: flex; gap: 16px; }
+
+/* A row of boxes. Neighbouring borders overlap so lines stay 1px.
+   Set columns per row, e.g. style={{ gridTemplateColumns: '1fr 1fr 1fr' }} */
+.boxes {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  margin-top: -1px;
+}
+
+.box {
+  border: 1px solid var(--print);
+  margin-left: -1px;
+  padding: 4px 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.box:first-child { margin-left: 0; }
+.box.tall { min-height: 64px; }
+
+/* Tick box: <span className="check" data-checked>x</span> */
+.check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--print);
+  margin-right: 6px;
+  font-family: var(--font-ink);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+  vertical-align: -2px;
+}
+
+/* ---------- Form controls look like blank boxes ---------- */
+
+.box input,
+.box textarea,
+.box select {
+  font: inherit;
+  font-family: var(--font-ink);
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  width: 100%;
+  outline: none;
+  resize: vertical;
+}
+.box input[type="date"] { font-size: 14px; }
+.box:focus-within { background: var(--print-faint); }
+.box input::placeholder,
+.box textarea::placeholder { color: var(--print); opacity: 0.45; }
+
+/* ---------- Buttons are printed boxes too ---------- */
+
+.btn {
+  font-family: var(--font-print);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--print);
+  background: transparent;
+  border: 1px solid var(--print);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.btn:hover { background: var(--print-faint); }
+.btn.solid { background: var(--print); color: var(--paper); }
+.btn.solid:hover { background: var(--ink); border-color: var(--ink); }
+
+/* A row of buttons under a slip */
+.actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* ---------- States ---------- */
+
+.lost .box .entry { text-decoration: line-through; }
+
+/* ---------- Navbar: the top of the form ---------- */
+
+.navbar {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.navbar .nav-links { display: flex; gap: 16px; }
+.navbar .nav-links a:hover,
+.navbar .nav-links a.active { text-decoration: underline; text-underline-offset: 3px; }

@@ -1,25 +1,23 @@
-/* Pretty Sure: a betting-shop slip.
-   Two inks per mode: "print" is the pre-printed form, "ink" is what you fill in. */
+/* Pretty Sure: a card table.
+   The page is green felt. Every call is a playing card: cream stock,
+   card-red for the printed parts, card-black for what you write. */
 
 :root {
-  --paper: #f6f1e4;
-  --print: #8a2a1f;
-  --ink: #1d2a4a;
-  --print-faint: color-mix(in srgb, var(--print) 12%, transparent);
+  --felt: #0f4a33;
+  --felt-dark: #0a3725;
+  --felt-line: color-mix(in srgb, #f3ead6 18%, transparent);
+  --card: #f6f0e1;
+  --card-edge: #d9cfb8;
+  --red: #b3261e;
+  --black: #1b1b1b;
+  --on-felt: #f3ead6;
+  --on-felt-dim: color-mix(in srgb, #f3ead6 65%, transparent);
+  --gold: #d8b25a;
 
-  --font-print: 'Archivo Narrow', 'Arial Narrow', sans-serif;
-  --font-ink: 'Courier Prime', 'Courier New', monospace;
+  --font-deck: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --font-ui: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
 
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #16130f;
-    --print: #d9714f;
-    --ink: #ece4d2;
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -27,9 +25,9 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-ink);
+  background: var(--felt);
+  color: var(--on-felt);
+  font-family: var(--font-ui);
   font-size: 15px;
   line-height: 1.4;
 }
@@ -38,105 +36,113 @@ a { color: inherit; text-decoration: none; }
 h1, h2, h3 { margin: 0; }
 
 .container {
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 24px 16px 64px;
 }
 
-/* ---------- Printed text (the form itself) ---------- */
+/* ---------- Type ---------- */
 
+/* Small printed headings: "odds", "settles" */
 .label {
-  font-family: var(--font-print);
+  font-family: var(--font-ui);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--print);
+  color: var(--on-felt-dim);
 }
 
 .title {
-  font-family: var(--font-print);
-  font-size: 22px;
+  font-family: var(--font-deck);
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--print);
+  line-height: 1.1;
+  color: var(--on-felt);
 }
 
 .fine-print {
-  font-family: var(--font-print);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--print);
-}
-
-/* ---------- Filled-in text (your entries) ---------- */
-
-.entry {
-  font-family: var(--font-ink);
+  font-family: var(--font-deck);
+  font-style: italic;
   font-size: 16px;
-  color: var(--ink);
+  color: var(--on-felt-dim);
+}
+.fine-print a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+
+/* What you wrote */
+.entry {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  color: var(--black);
 }
 
-/* ---------- The slip ---------- */
+/* ---------- A card on the table (the form, a full slip) ---------- */
 
-.slip { margin-bottom: 24px; }
+.slip {
+  background: var(--card);
+  color: var(--black);
+  border: 1px solid var(--card-edge);
+  border-radius: 3px;
+  padding: 18px 20px 20px;
+  margin-bottom: 24px;
+  box-shadow: 3px 3px 0 var(--felt-dark);
+}
+.slip .label { color: var(--red); }
+.slip .title { color: var(--black); }
+.slip .fine-print { color: var(--red); }
 
 .slip-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  border-bottom: 2px solid var(--print);
-  padding-bottom: 4px;
-  margin-bottom: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
 }
+.slip .slip-head { border-bottom: 1px solid var(--card-edge); }
 
-/* A row of boxes. Neighbouring borders overlap so lines stay 1px.
-   Set columns per row, e.g. style={{ gridTemplateColumns: '1fr 1fr 1fr' }} */
+/* A row of fields inside a card */
 .boxes {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  margin-top: -1px;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 16px;
 }
 
 .box {
-  border: 1px solid var(--print);
-  margin-left: -1px;
-  padding: 4px 8px 6px;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--card-edge);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   min-width: 0;
 }
-.box:first-child { margin-left: 0; }
-.box.tall { min-height: 64px; }
+.box.tall { min-height: 72px; }
 
 /* Tick box: <span className="check" data-checked>x</span> */
 .check {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 13px;
-  height: 13px;
-  border: 1px solid var(--print);
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--red);
+  border-radius: 0;
   margin-right: 6px;
-  font-family: var(--font-ink);
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--black);
   vertical-align: -2px;
 }
 
-/* ---------- Form controls look like blank boxes ---------- */
+/* ---------- Form fields: you write straight onto the card ---------- */
 
 .box input,
 .box textarea,
 .box select {
   font: inherit;
-  font-family: var(--font-ink);
-  font-size: 16px;
-  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 17px;
+  color: var(--black);
   background: transparent;
   border: 0;
   padding: 0;
@@ -144,46 +150,130 @@ h1, h2, h3 { margin: 0; }
   outline: none;
   resize: vertical;
 }
-.box input[type="date"] { font-size: 14px; }
-.box:focus-within { background: var(--print-faint); }
+.box textarea { font-family: var(--font-deck); font-size: 22px; line-height: 1.25; }
+.box:focus-within { border-bottom-color: var(--red); box-shadow: 0 1px 0 var(--red); }
 .box input::placeholder,
-.box textarea::placeholder { color: var(--print); opacity: 0.45; }
+.box textarea::placeholder { color: var(--black); opacity: 0.3; }
 
-/* ---------- Buttons are printed boxes too ---------- */
+/* ---------- Buttons ---------- */
 
 .btn {
-  font-family: var(--font-print);
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-ui);
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--print);
+  color: var(--black);
   background: transparent;
-  border: 1px solid var(--print);
-  padding: 8px 14px;
+  border: 1.5px solid currentColor;
+  border-radius: 0;
+  padding: 10px 18px;
   cursor: pointer;
 }
-.btn:hover { background: var(--print-faint); }
-.btn.solid { background: var(--print); color: var(--paper); }
-.btn.solid:hover { background: var(--ink); border-color: var(--ink); }
+.btn:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+.btn.solid { background: var(--red); border-color: var(--red); color: var(--card); }
+.btn.solid:hover { background: #941d17; border-color: #941d17; }
 
-/* A row of buttons under a slip */
-.actions { display: flex; gap: 8px; margin-top: 12px; }
+/* A row of buttons under a card */
+.actions { display: flex; gap: 10px; margin-top: 18px; }
+
+/* ---------- Your hand: the home list as cards dealt on the felt ---------- */
+
+.container:has(> a.slip) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 18px 14px;
+  align-content: start;
+}
+.container:has(> a.slip) > .slip-head { grid-column: 1 / -1; }
+
+a.slip {
+  aspect-ratio: 5 / 7;
+  margin: 0;
+  padding: 12px;
+  display: flex;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+a.slip:nth-of-type(3n + 1) { transform: rotate(-1.5deg); }
+a.slip:nth-of-type(3n + 3) { transform: rotate(1.2deg); }
+a.slip:hover { transform: translateY(-6px) rotate(0); box-shadow: 6px 8px 0 var(--felt-dark); }
+
+/* Inside a card: odds in the top corner like a rank, the call in the
+   middle, the settle date in the bottom corner. */
+a.slip .boxes {
+  flex: 1;
+  grid-auto-flow: row;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "odds" "text" "due";
+  gap: 0;
+}
+a.slip .box { border: 0; padding: 0; min-height: 0; }
+a.slip .box:nth-child(1) { grid-area: text; justify-content: center; text-align: center; }
+a.slip .box:nth-child(2) { grid-area: odds; align-items: flex-start; }
+a.slip .box:nth-child(3) { grid-area: due; align-items: flex-end; }
+a.slip .label { display: none; }
+
+a.slip .box:nth-child(1) .entry {
+  font-family: var(--font-deck);
+  font-size: 18px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+a.slip .box:nth-child(2) .entry {
+  font-family: var(--font-deck);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--red);
+}
+a.slip .box:nth-child(3) .entry {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--red);
+}
 
 /* ---------- States ---------- */
 
-.lost .box .entry { text-decoration: line-through; }
+.lost .entry { text-decoration: line-through; opacity: 0.6; }
 
-/* ---------- Navbar: the top of the form ---------- */
+/* ---------- Page headings printed on the felt: "—— YOUR CALLS ——" ---------- */
+
+.container > .slip-head { justify-content: center; padding: 6px 0 14px; }
+.container > .slip-head .title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  font-size: 15px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.container > .slip-head .title::before,
+.container > .slip-head .title::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--gold);
+  opacity: 0.6;
+}
+
+/* ---------- Navbar: kept plain on purpose; the real header design comes later ---------- */
 
 .navbar {
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 20px 16px 0;
+  padding: 18px 16px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
-.navbar .nav-links { display: flex; gap: 16px; }
+.navbar > .title { font-size: 20px; }
+.navbar .nav-links { display: flex; gap: 18px; }
 .navbar .nav-links a:hover,
-.navbar .nav-links a.active { text-decoration: underline; text-underline-offset: 3px; }
+.navbar .nav-links a.active { color: var(--gold); }

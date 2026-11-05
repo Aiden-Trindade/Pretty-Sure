@@ -61,7 +61,7 @@ export default function App() {
             path="/p/:id"
             element={<Call calls={calls} onSettle={settleCall} />}
           />
-          <Route path="/stats" element={<Stats />} />
+          <Route path="/stats" element={<Stats calls={calls} balance={balance} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

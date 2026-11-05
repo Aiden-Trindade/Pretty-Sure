@@ -238,6 +238,105 @@ a.slip .box:nth-child(3) .entry {
   color: var(--red);
 }
 
+/* ---------- Flip to settle ----------
+   <div className="card-flip [flipped] [flipping] [won|lost]">
+     <div className="card-face front slip">...</div>
+     <div className="card-face back slip">...</div>
+   </div>
+   flipped  = the call is settled, so its back face shows (no animation)
+   flipping = it was settled just now, so play the whole move
+   won/lost = which ending to play */
+
+.card-flip { position: relative; display: grid; perspective: 1400px; margin-bottom: 24px; }
+.card-face {
+  grid-area: 1 / 1;           /* both faces sit in the same spot */
+  margin-bottom: 0;
+  backface-visibility: hidden;
+}
+.card-face.back { transform: rotateY(180deg); }
+.card-flip.flipped .card-face.front { transform: rotateY(-180deg); }
+.card-flip.flipped .card-face.back { transform: rotateY(0); }
+
+/* The back of a settled card: the result, big, in the middle */
+.card-face.back { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+.result { font-family: var(--font-deck); font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase; }
+.won .result { color: var(--black); }
+.lost .result { color: var(--red); }
+
+/* Opening a card: it's dealt onto the table, spinning in from above,
+   turning from edge-on to flat, then landing with a small bounce.
+   A settled card stamps its result on as it lands. */
+.card-flip { animation: deal-in 0.8s cubic-bezier(0.2, 0.75, 0.3, 1); z-index: 1; }
+@keyframes deal-in {
+  0%   { transform: perspective(1400px) translateY(-70vh) rotate(-220deg) rotateY(-85deg) scale(0.7); }
+  70%  { transform: perspective(1400px) translateY(5px) rotate(4deg) rotateY(0) scale(1.03); }
+  85%  { transform: perspective(1400px) translateY(-4px) rotate(-1deg) rotateY(0) scale(1); }
+  100% { transform: perspective(1400px) translateY(0) rotate(0) rotateY(0) scale(1); }
+}
+.card-flip.flipped .result { animation: stamp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3) 0.6s both; }
+
+/* Settling: the squeeze, how a dealer reveals a card. One card, turned by the
+   whole .card-flip. It peeks up at one edge and falls back, peeks further and
+   trembles, then whips right over and slams down. The faces hold their
+   starting positions here so they turn together as a single card. */
+.card-flip.flipping { transform-style: preserve-3d; animation: squeeze 1.7s ease-in-out both; z-index: 1; }
+.card-flip.flipping .card-face.front { transform: rotateY(0); pointer-events: none; }
+.card-flip.flipping .card-face.back { transform: rotateY(180deg); }
+
+@keyframes squeeze {
+  0%   { transform: perspective(1400px) rotateY(0) rotateX(0) scale(1); }
+  14%  { transform: perspective(1400px) rotateY(-28deg) rotateX(5deg) scale(1.01); }
+  22%  { transform: perspective(1400px) rotateY(-24deg) rotateX(4deg) scale(1.01); }
+  30%  { transform: perspective(1400px) rotateY(0) rotateX(0) scale(1); }
+  46%  { transform: perspective(1400px) rotateY(-64deg) rotateX(9deg) scale(1.05); }
+  51%  { transform: perspective(1400px) rotateY(-58deg) rotateX(8deg) scale(1.05); }
+  56%  { transform: perspective(1400px) rotateY(-67deg) rotateX(9deg) scale(1.05); }
+  61%  { transform: perspective(1400px) rotateY(-60deg) rotateX(8deg) scale(1.05); }
+  76%  { transform: perspective(1400px) rotateY(-180deg) rotateX(0) scale(1.14); }
+  85%  { transform: perspective(1400px) rotateY(-180deg) rotateX(0) scale(0.96); }
+  92%  { transform: perspective(1400px) rotateY(-180deg) rotateX(0) scale(1.01); }
+  100% { transform: perspective(1400px) rotateY(-180deg) rotateX(0) scale(1); }
+}
+
+/* the result stamps onto the card as it lands */
+.card-flip.flipping .result { animation: stamp 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3) 1.4s both; }
+@keyframes stamp {
+  0%   { transform: scale(2.4) rotate(-8deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+.flipped .result { transform: rotate(-3deg); }
+
+/* won: a gold ring bursts out from behind the card */
+.card-flip.flipping.won::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--gold);
+  pointer-events: none;
+  z-index: -1;
+  animation: payout 0.7s ease-out 1.45s both;
+}
+@keyframes payout {
+  0%   { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* lost: the card shudders after it lands */
+.card-flip.flipping.lost { animation: squeeze 1.7s ease-in-out both, shudder 0.4s ease-in-out 1.7s; }
+@keyframes shudder {
+  0%, 100% { translate: 0; }
+  20% { translate: -8px; }
+  40% { translate: 7px; }
+  60% { translate: -5px; }
+  80% { translate: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-flip, .card-flip.flipping, .card-flip.flipped .result, .card-flip.flipping .result, .card-flip.flipping::before { animation: none; }
+  .card-flip.flipping .card-face.front { transform: rotateY(-180deg); }
+  .card-flip.flipping .card-face.back { transform: rotateY(0); }
+}
+
 /* ---------- States ---------- */
 
 .lost .entry { text-decoration: line-through; opacity: 0.6; }
@@ -274,6 +373,12 @@ a.slip .box:nth-child(3) .entry {
   align-items: baseline;
 }
 .navbar > .title { font-size: 20px; }
+.navbar .balance {
+  font-family: var(--font-deck);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+}
 .navbar .nav-links { display: flex; gap: 18px; }
 .navbar .nav-links a:hover,
 .navbar .nav-links a.active { color: var(--gold); }

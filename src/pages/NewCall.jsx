@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function NewCall({ onAdd }) {
+export default function NewCall({ onAdd, balance }) {
   const [text, setText] = useState("");
   const [confidence, setConfidence] = useState(70);
   const [dueDate, setDueDate] = useState("");
   const [kind, setKind] = useState("task");
+  const [stake, setStake] = useState(0);
 
   const navigate = useNavigate();
 
@@ -22,7 +23,7 @@ export default function NewCall({ onAdd }) {
       createdAt: new Date().toISOString(),
       outcome: null,
       kind,
-      stake: 0,
+      stake: Number(stake) || 0,
     };
 
     onAdd(newCall);
@@ -60,9 +61,20 @@ export default function NewCall({ onAdd }) {
           <input
             type="number"
             min="1"
-            max="99"
+            max="100"
             value={confidence}
             onChange={(e) => setConfidence(e.target.value)}
+          />
+        </label>
+
+        <label className="box">
+          <span className="label">Stake</span>
+          <input
+            type="number"
+            min="0"
+            max={balance}
+            value={stake}
+            onChange={(e) => setStake(e.target.value)}
           />
         </label>
 

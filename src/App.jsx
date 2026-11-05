@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import StyleGuide from "./pages/StyleGuide";
+import { getBalance } from "./utils/points";
 
 // Page imports
 import Home from "./pages/Home";
@@ -35,20 +36,31 @@ export default function App() {
     }
   }, [calls]);
 
+  const balance = getBalance(calls)
+
   function addCall(call) {
     setCalls((prev) => [...prev, call]);
   }
 
+  function settleCall(id, outcome) {
+    setCalls((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, outcome } : c))
+    );
+  }
+
   return (
     <>
-      <Navbar />
+      <Navbar balance={balance} />
 
       <main className="container">
         <Routes>
           <Route path="/style" element={<StyleGuide />} />
           <Route path="/" element={<Home calls={calls} />} />
-          <Route path="/new" element={<NewCall onAdd={addCall} />} />
-          <Route path="/p/:id" element={<Call />} />
+          <Route path="/new" element={<NewCall onAdd={addCall} balance={balance} />} />
+          <Route
+            path="/p/:id"
+            element={<Call calls={calls} onSettle={settleCall} />}
+          />
           <Route path="/stats" element={<Stats />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

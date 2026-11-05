@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { getReturn } from "../utils/points";
 
-export default function NewCall({ onAdd, balance }) {
+export default function NewCall({ onAdd, balance, calls = [] }) {
+  const [searchParams] = useSearchParams();
+  const parent = calls.find((c) => c.id === searchParams.get("from"));
+
   const [text, setText] = useState("");
   const [confidence, setConfidence] = useState(70);
   const [dueDate, setDueDate] = useState("");
   const [kind, setKind] = useState("task");
-  const [stake, setStake] = useState(0);
+  const [stake, setStake] = useState(parent ? getReturn(parent) : 0);
 
   const navigate = useNavigate();
 
@@ -24,6 +28,7 @@ export default function NewCall({ onAdd, balance }) {
       outcome: null,
       kind,
       stake: Number(stake) || 0,
+      parentId: parent ? parent.id : null,
     };
 
     onAdd(newCall);
@@ -33,8 +38,11 @@ export default function NewCall({ onAdd, balance }) {
   return (
     <form className="slip" onSubmit={handleSubmit}>
       <div className="slip-head">
-        <span className="title">Make a call</span>
+        <span className="title">
+          {parent ? "Double or nothing" : "Make a call"}
+        </span>
       </div>
+
 
       <div className="boxes">
         <label className="box tall">
@@ -73,6 +81,7 @@ export default function NewCall({ onAdd, balance }) {
             type="number"
             min="0"
             max={balance}
+            readOnly={Boolean(parent)}
             value={stake}
             onChange={(e) => setStake(e.target.value)}
           />

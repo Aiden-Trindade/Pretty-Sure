@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import NotFound from "./NotFound";
 import { getReturn } from "../utils/points";
 
-export default function Call({ calls = [], onSettle }) {
+export default function Call({ calls = [], onSettle, balance }) {
   const { id } = useParams();
   const call = calls.find((c) => c.id === id);
 
@@ -30,6 +30,15 @@ export default function Call({ calls = [], onSettle }) {
   const formattedDate = call.dueDate
     ? call.dueDate.split("-").reverse().join("/")
     : "";
+
+  const payout = getReturn(call);
+  const alreadyChained = calls.some((c) => c.parentId === call.id);
+
+  const canDoubleOrNothing =
+    call.outcome === true &&
+    payout > 0 &&
+    payout <= balance &&
+    !alreadyChained;
 
   return (
     <div className={flipClass}>
@@ -89,6 +98,14 @@ export default function Call({ calls = [], onSettle }) {
         <span className="label">Settled</span>
         <span className="result">{call.outcome ? "Won" : "Lost"}</span>
         <span className="entry">{call.text}</span>
+
+        {canDoubleOrNothing && (
+          <Link className="btn solid" to={`/new?from=${call.id}`}>
+            Double or nothing
+          </Link>
+        )}
+
+
         <Link className="btn" to="/">
           Back to your hand
         </Link>

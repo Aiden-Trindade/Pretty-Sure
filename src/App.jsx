@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import StyleGuide from "./pages/StyleGuide";
 import { getBalance } from "./utils/points";
+import { getParlaysChange } from "./utils/parlays";
 
 // Page imports
 import Home from "./pages/Home";
@@ -10,8 +11,10 @@ import NewCall from "./pages/NewCall";
 import Call from "./pages/Call";
 import Stats from "./pages/Stats";
 import NotFound from "./pages/NotFound";
+import Parlays from "./pages/Parlays";
 
 const STORAGE_KEY = "pretty_sure_calls";
+const PARLAYS_KEY = "pretty_sure_parlays";
 
 function loadCalls() {
   try {
@@ -23,9 +26,20 @@ function loadCalls() {
   }
 }
 
+function loadParlays() {
+  try {
+    const saved = localStorage.getItem(PARLAYS_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (error) {
+    console.error("Failed to load parlays from localStorage:", error);
+    return [];
+  }
+}
+
 export default function App() {
   // Pass loadCalls as an initializer function so it only runs once at startup
   const [calls, setCalls] = useState(loadCalls);
+  const [parlays, setParlays] = useState(loadParlays);
 
   // Sync calls to localStorage whenever the calls array updates
   useEffect(() => {
@@ -36,7 +50,15 @@ export default function App() {
     }
   }, [calls]);
 
-  const balance = getBalance(calls)
+  useEffect(() => {
+    try {
+      localStorage.setItem(PARLAYS_KEY, JSON.stringify(parlays));
+    } catch (error) {
+      console.error("Failed to save parlays to localStorage:", error);
+    }
+  }, [parlays]);
+
+  const balance = getBalance(calls) + getParlaysChange(parlays, calls);
 
   function addCall(call) {
     setCalls((prev) => [...prev, call]);
@@ -48,6 +70,10 @@ export default function App() {
     );
   }
 
+  function addParlay(parlay) {
+    setParlays((prev) => [...prev, parlay]);
+  }
+
   return (
     <>
       <Navbar balance={balance} />
@@ -56,11 +82,24 @@ export default function App() {
         <Routes>
           <Route path="/style" element={<StyleGuide />} />
           <Route path="/" element={<Home calls={calls} />} />
-          <Route path="/new" element={<NewCall onAdd={addCall} balance={balance} />} />
+          <Route path="/new" element={<NewCall onAdd={addCall} balance={balance} calls={calls} />} />
           <Route
             path="/p/:id"
-            element={<Call calls={calls} onSettle={settleCall} />}
+            element={<Call calls={calls} onSettle={settleCall} balance={balance} />}
           />
+
+          <Route
+            path="/parlays"
+            element={
+              <Parlays
+                calls={calls}
+                parlays={parlays}
+                balance={balance}
+                onAdd={addParlay}
+              />
+            }
+          />
+          
           <Route path="/stats" element={<Stats calls={calls} balance={balance} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

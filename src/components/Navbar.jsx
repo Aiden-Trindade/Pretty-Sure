@@ -13,6 +13,12 @@ export default function Navbar({ balance }) {
         <NavLink to="/new" className="label">
           New call
         </NavLink>
+
+        <NavLink to="/parlays" className="label">
+          Parlays
+        </NavLink>
+
+        
         <NavLink to="/stats" className="label">
           Stats
         </NavLink>

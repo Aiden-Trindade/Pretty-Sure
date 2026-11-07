@@ -1,4 +1,5 @@
 import { getSettled, getWinRate, getCalibration } from "../utils/stats";
+import CalibrationChart from "../components/CalibrationChart";
 
 export default function Stats({ calls = [], balance = 0 }) {
   const settled = getSettled(calls);
@@ -47,6 +48,8 @@ export default function Stats({ calls = [], balance = 0 }) {
           <div className="slip-head">
             <span className="title">Are you as sure as you say?</span>
           </div>
+
+          <CalibrationChart calibration={calibration} />
 
           {calibration.map((range) => (
             <div className="boxes" key={range.min}>

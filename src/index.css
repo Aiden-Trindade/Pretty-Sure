@@ -407,3 +407,55 @@ a.slip .box:nth-child(3) .entry {
 .slip-head .result { font-size: 22px; color: var(--black); }
 .slip-head .result.lost { color: var(--red); }
 .slip { color-scheme: light; }
+
+/* Calibration chart: drawn in ink on the card */
+.chart { display: block; width: 100%; max-width: 440px; margin: 12px auto 24px; overflow: visible; }
+.chart-frame { fill: none; stroke: var(--black); stroke-width: 1; opacity: 0.35; }
+.chart-grid { stroke: var(--card-edge); stroke-width: 0.75; }
+.chart-zone { fill: var(--red); opacity: 0.07; }
+.chart-perfect { stroke: var(--black); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.5; }
+.chart-line { fill: none; stroke: var(--red); stroke-width: 2; stroke-linejoin: round; }
+.chart-tick {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  fill: var(--black);
+  opacity: 0.55;
+}
+.chart-zone-label {
+  font-family: var(--font-deck);
+  font-style: italic;
+  font-size: 12px;
+  fill: var(--black);
+  opacity: 0.5;
+}
+.chart-zone-label.over { fill: var(--red); opacity: 0.75; }
+.chart-label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--black);
+  opacity: 0.7;
+}
+.chart-dot { fill: var(--red); stroke: var(--card); stroke-width: 2; }
+
+/* Overdue: an open call past its settle date gets a red ink stamp.
+   Stamps sit in the flow just above the card's text, never on top of it. */
+a.slip.overdue .box:nth-child(1)::before {
+  content: "Late";
+  align-self: center;
+  margin-bottom: 10px;
+  transform: rotate(-4deg);
+  padding: 1px 5px 1px 7px;
+  border: 1.5px solid var(--red);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  opacity: 0.8;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }

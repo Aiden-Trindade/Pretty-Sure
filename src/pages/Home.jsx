@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { formatDate, isOverdue } from "../utils/dates";
 
 export default function Home({ calls = [] }) {
   return (
@@ -13,14 +14,12 @@ export default function Home({ calls = [] }) {
         </p>
       ) : (
         calls.map((call) => {
-          const formattedDate = call.dueDate
-            ? call.dueDate.split("-").reverse().join("/")
-            : "";
+          const late = isOverdue(call);
 
           return (
             <Link
               to={`/p/${call.id}`}
-              className="slip"
+              className={`slip${late ? " overdue" : ""}`}
               key={call.id}
             >
               <div className="boxes">
@@ -36,7 +35,7 @@ export default function Home({ calls = [] }) {
 
                 <div className="box">
                   <span className="label">Settles</span>
-                  <span className="entry">{formattedDate}</span>
+                  <span className="entry">{formatDate(call.dueDate)}</span>
                 </div>
               </div>
             </Link>

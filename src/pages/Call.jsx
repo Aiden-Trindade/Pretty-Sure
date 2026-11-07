@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import NotFound from "./NotFound";
 import { getReturn } from "../utils/points";
+import { formatDate } from "../utils/dates";
 
-export default function Call({ calls = [], onSettle, balance }) {
+export default function Call({ calls = [], onSettle, balance = 0 }) {
   const { id } = useParams();
   const call = calls.find((c) => c.id === id);
 
@@ -26,10 +27,6 @@ export default function Call({ calls = [], onSettle, balance }) {
     (settled ? " flipped" : "") +
     (justSettled ? " flipping" : "") +
     (settled ? (call.outcome ? " won" : " lost") : "");
-
-  const formattedDate = call.dueDate
-    ? call.dueDate.split("-").reverse().join("/")
-    : "";
 
   const payout = getReturn(call);
   const alreadyChained = calls.some((c) => c.parentId === call.id);
@@ -67,11 +64,11 @@ export default function Call({ calls = [], onSettle, balance }) {
           </div>
           <div className="box">
             <span className="label">To return</span>
-            <span className="entry">{getReturn(call)}</span>
+            <span className="entry">{payout}</span>
           </div>
           <div className="box">
             <span className="label">Settles</span>
-            <span className="entry">{formattedDate}</span>
+            <span className="entry">{formatDate(call.dueDate)}</span>
           </div>
         </div>
 
@@ -96,7 +93,9 @@ export default function Call({ calls = [], onSettle, balance }) {
       {/* Back Face */}
       <div className="card-face back slip">
         <span className="label">Settled</span>
-        <span className="result">{call.outcome ? "Won" : "Lost"}</span>
+        <span className={`result ${call.outcome ? "won" : "lost"}`}>
+          {call.outcome ? "Won" : "Lost"}
+        </span>
         <span className="entry">{call.text}</span>
 
         {canDoubleOrNothing && (
@@ -104,7 +103,6 @@ export default function Call({ calls = [], onSettle, balance }) {
             Double or nothing
           </Link>
         )}
-
 
         <Link className="btn" to="/">
           Back to your hand

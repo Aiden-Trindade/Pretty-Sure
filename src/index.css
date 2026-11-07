@@ -583,3 +583,57 @@ a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
 }
 .empty-suit.red { color: var(--red); }
 .empty-suit.black { color: var(--black); }
+
+/* Installed on an iPhone the felt runs under the status bar, so keep the header clear of the notch */
+.navbar { padding-top: max(22px, calc(env(safe-area-inset-top) + 10px)); }
+.container { padding-bottom: max(64px, calc(env(safe-area-inset-bottom) + 32px)); }
+
+/* ---------- Install card: bottom of the home page until the app is installed ---------- */
+.install-card { grid-column: 1 / -1; margin-top: 12px; }
+.container:has(> a.slip) > .install-card { margin-top: 18px; }
+.install-copy { margin: 12px 0 4px; font-size: 15px; line-height: 1.5; color: var(--black); }
+.install-steps {
+  counter-reset: step;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.install-steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.install-steps li::before {
+  content: counter(step);
+  font-family: var(--font-deck);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--red);
+}
+.install-icon {
+  color: var(--black);
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  margin: 0 1px;
+  padding: 2px;
+  vertical-align: -4px;
+  fill: none;
+  stroke: var(--black);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  border: 1px solid var(--card-edge);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--card-edge) 35%, transparent);
+}
+.install-card .actions { flex-wrap: wrap; align-items: center; }
+.install-status { font-size: 13px; color: var(--red); font-weight: 600; }

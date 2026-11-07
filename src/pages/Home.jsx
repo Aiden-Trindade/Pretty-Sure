@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { formatDate, isOverdue } from "../utils/dates";
 import EmptyState from "../components/EmptyState";
+import InstallCard from "../components/InstallCard";
 
 export default function Home({ calls = [] }) {
   return (
@@ -48,6 +49,8 @@ export default function Home({ calls = [] }) {
           );
         })
       )}
+
+      <InstallCard />
     </>
   );
 }

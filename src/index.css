@@ -29,6 +29,8 @@ body {
   color: var(--on-felt);
   font-family: var(--font-ui);
   font-size: 15px;
+  /* Keep ♥ ♦ ♠ ♣ as card suits; some phones would otherwise swap ♥ for an emoji */
+  font-variant-emoji: text;
   line-height: 1.4;
 }
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getLegs, getParlayOutcome, getParlayReturn } from "../utils/parlays";
+import EmptyState from "../components/EmptyState";
 
 export default function Parlays({ calls = [], parlays = [], balance = 0, onAdd }) {
   const [picked, setPicked] = useState([]);
@@ -34,11 +35,16 @@ export default function Parlays({ calls = [], parlays = [], balance = 0, onAdd }
 
   return (
     <>
-      {/* Builder Form Card */}
+      {/* Builder Form Card or Empty State */}
       {openCalls.length < 2 ? (
-        <p className="fine-print">
-          You need at least 2 open calls to build a parlay.
-        </p>
+        <EmptyState
+          suit="♦"
+          color="red"
+          title="A parlay needs two open calls"
+          text="Place at least two calls before grouping them into a parlay."
+          to="/new"
+          action="Make a call"
+        />
       ) : (
         <form className="slip" onSubmit={handleSubmit}>
           <div className="slip-head">

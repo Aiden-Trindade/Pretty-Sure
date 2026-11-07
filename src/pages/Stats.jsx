@@ -1,5 +1,6 @@
 import { getSettled, getWinRate, getCalibration } from "../utils/stats";
 import CalibrationChart from "../components/CalibrationChart";
+import EmptyState from "../components/EmptyState";
 
 export default function Stats({ calls = [], balance = 0 }) {
   const settled = getSettled(calls);
@@ -40,9 +41,14 @@ export default function Stats({ calls = [], balance = 0 }) {
         </div>
       </div>
 
-      {/* Second Card: Calibration Breakdown or Empty State */}
       {settled.length === 0 ? (
-        <p className="fine-print">No settled calls yet to check calibration.</p>
+        <EmptyState
+          suit="♣"
+          title="Nothing to measure yet"
+          text="Settle some calls to see how accurate your confidence is."
+          to="/"
+          action="Back to your calls"
+        />
       ) : (
         <div className="slip">
           <div className="slip-head">

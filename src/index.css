@@ -362,26 +362,117 @@ a.slip .box:nth-child(3) .entry {
   opacity: 0.6;
 }
 
-/* ---------- Navbar: kept plain on purpose; the real header design comes later ---------- */
+/* ---------- Header: card-corner logo, a hand of page cards, a chip for the bank ---------- */
 
 .navbar {
   max-width: 600px;
-  margin: 0 auto;
-  padding: 18px 16px;
+  margin: 0 auto 8px;
+  padding: 22px 16px 12px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--felt-line);
 }
-.navbar > .title { font-size: 20px; }
+
+/* Logo: a card corner, then the name */
+.navbar > .title { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+.logo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 36px;
+  height: 46px;
+  padding: 5px 4px;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--felt-dark);
+  color: var(--black);
+  font-family: var(--font-deck);
+  line-height: 1;
+}
+.logo-card span:first-child { font-size: 12px; font-weight: 700; letter-spacing: -0.02em; }
+.logo-card span:last-child { font-size: 15px; }
+
+/* The hand: four cards fanned out, overlapping */
+.hand { display: flex; align-items: flex-end; padding: 10px 6px 0; }
+.nav-card {
+  position: relative;
+  width: 54px;
+  height: 70px;
+  margin-right: -10px;
+  padding: 4px 5px;
+  background: var(--card);
+  border: 1px solid var(--card-edge);
+  border-top: 3px solid var(--card);
+  border-radius: 2px;
+  box-shadow: 1px 1px 0 var(--felt-dark);
+  font-family: var(--font-deck);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  transform-origin: 50% 120%;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.nav-card:last-child { margin-right: 0; }
+.nav-card:nth-child(1) { --tilt: -7deg; --drop: 3px; }
+.nav-card:nth-child(2) { --tilt: -2deg; --drop: 0px; }
+.nav-card:nth-child(3) { --tilt: 3deg;  --drop: 0px; }
+.nav-card:nth-child(4) { --tilt: 8deg;  --drop: 3px; }
+.nav-card { transform: rotate(var(--tilt)) translateY(var(--drop)); }
+
+.nav-card .red { color: var(--red); }
+.nav-card .black { color: var(--black); }
+.nav-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--black);
+}
+
+/* Hover pulls a card halfway out; the current page is pulled all the way */
+.nav-card:hover { transform: rotate(var(--tilt)) translateY(-6px); z-index: 1; }
+.nav-card.active {
+  transform: rotate(var(--tilt)) translateY(-12px);
+  border-top-color: var(--gold);
+  box-shadow: 3px 3px 0 var(--felt-dark);
+  z-index: 2;
+}
+.nav-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* The bank: a gold chip and the balance */
+.bank { display: flex; align-items: center; gap: 8px; }
+.chip {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px dashed var(--felt);
+  outline: 2px solid var(--gold);
+}
 .navbar .balance {
   font-family: var(--font-deck);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--gold);
 }
-.navbar .nav-links { display: flex; gap: 18px; }
-.navbar .nav-links a:hover,
-.navbar .nav-links a.active { color: var(--gold); }
+
+/* Phone: logo and bank on top, the hand centred underneath */
+@media (max-width: 560px) {
+  .navbar { flex-wrap: wrap; }
+  .navbar > .title { font-size: 18px; }
+  .hand { order: 3; width: 100%; justify-content: center; padding-top: 14px; }
+  .nav-card { height: 60px; }
+}
 
 /* ---------- Parlays ---------- */
 
@@ -459,3 +550,34 @@ a.slip.overdue .box:nth-child(1)::before {
   mix-blend-mode: multiply;
 }
 a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
+
+/* ---------- Empty states: one centred card with a big suit, a line, and one action ---------- */
+.slip.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+  margin: 32px auto;
+  padding: 36px 28px 30px;
+  text-align: center;
+}
+.empty-suit {
+  font-family: var(--font-deck);
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.slip.empty .title { font-size: 26px; }
+.slip.empty .fine-print { color: var(--black); opacity: 0.7; margin: 0 0 10px; }
+
+/* Phone: form fields go two to a row so dates and numbers aren't cut off */
+@media (max-width: 560px) {
+  form.slip .boxes { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  form.slip .box.tall { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .slip .boxes:has(> :nth-child(4)) { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+}
+.empty-suit.red { color: var(--red); }
+.empty-suit.black { color: var(--black); }

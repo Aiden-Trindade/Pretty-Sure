@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatDate, isOverdue } from "../utils/dates";
+import EmptyState from "../components/EmptyState";
 
 export default function Home({ calls = [] }) {
   return (
@@ -9,9 +10,14 @@ export default function Home({ calls = [] }) {
       </div>
 
       {calls.length === 0 ? (
-        <p className="fine-print">
-          No calls yet. <Link to="/new">Make one</Link>
-        </p>
+        <EmptyState
+          suit="♥"
+          color="red"
+          title="Deal your first call"
+          text="Say what you think will happen and how sure you are."
+          to="/new"
+          action="Make a call"
+        />
       ) : (
         calls.map((call) => {
           const late = isOverdue(call);

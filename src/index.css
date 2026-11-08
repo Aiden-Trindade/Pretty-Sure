@@ -378,26 +378,76 @@ a.slip .box:nth-child(3) .entry {
 }
 
 /* Logo: a card corner, then the name */
-.navbar > .title { display: flex; align-items: center; gap: 10px; font-size: 22px; }
+.brand { position: relative; display: flex; align-items: center; gap: 10px; }
+.brand .title { font-size: 22px; }
+/* The logo is a real two-sided card: P-S on the front, your player number on the back */
 .logo-card {
+  width: 38px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  perspective: 300px;
+  transition: transform 0.15s ease;
+}
+.logo-card:hover { transform: rotate(-4deg); }
+.logo-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.logo-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.logo-card.flipped .logo-inner { transform: rotateY(180deg); }
+
+.logo-face {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--felt-dark);
+  font-family: var(--font-deck);
+  line-height: 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.logo-front {
   justify-content: flex-start;
   gap: 2px;
-  min-width: 36px;
-  height: 46px;
   padding: 5px 4px;
   background: var(--card);
   border: 1px solid var(--card-edge);
-  border-radius: 2px;
-  box-shadow: 2px 2px 0 var(--felt-dark);
   color: var(--black);
-  font-family: var(--font-deck);
-  line-height: 1;
 }
-.logo-card span:first-child { font-size: 12px; font-weight: 700; letter-spacing: -0.02em; }
-.logo-card span:last-child { font-size: 15px; }
+.logo-front span:first-child { font-size: 12px; font-weight: 700; letter-spacing: -0.02em; }
+.logo-front span:last-child { font-size: 15px; }
+
+/* Card back: felt with a gold inset border, like the back of the deck */
+.logo-back {
+  justify-content: center;
+  gap: 1px;
+  transform: rotateY(180deg);
+  background: var(--felt-dark);
+  border: 1px solid var(--gold);
+  outline: 1px solid var(--gold);
+  outline-offset: -4px;
+  color: var(--gold);
+}
+.player-no { display: flex; flex-direction: column; align-items: center; font-size: 16px; font-weight: 700; letter-spacing: -0.03em; }
+.player-no small { font-size: 7px; font-weight: 400; font-style: italic; letter-spacing: 0.04em; margin-bottom: 1px; }
+.player-of { font-size: 7px; font-style: italic; opacity: 0.85; white-space: nowrap; }
+.back-pip { font-size: 18px; opacity: 0.7; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-inner { transition: none; }
+}
 
 /* The hand: four cards fanned out, overlapping */
 .hand { display: flex; align-items: flex-end; padding: 10px 6px 0; }
@@ -471,7 +521,7 @@ a.slip .box:nth-child(3) .entry {
 /* Phone: logo and bank on top, the hand centred underneath */
 @media (max-width: 560px) {
   .navbar { flex-wrap: wrap; }
-  .navbar > .title { font-size: 18px; }
+  .brand .title { font-size: 18px; }
   .hand { order: 3; width: 100%; justify-content: center; padding-top: 14px; }
   .nav-card { height: 60px; }
 }
@@ -637,3 +687,60 @@ a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
 }
 .install-card .actions { flex-wrap: wrap; align-items: center; }
 .install-status { font-size: 13px; color: var(--red); font-weight: 600; }
+
+/* ---------- Privacy page ---------- */
+.privacy { max-width: 560px; margin: 0 auto; }
+.privacy h2 {
+  margin: 20px 0 6px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.privacy p, .privacy li { margin: 0; font-size: 15px; line-height: 1.6; color: var(--black); }
+.privacy ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.privacy a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; }
+.privacy .fine-print { margin-top: 18px; font-size: 13px; color: var(--black); opacity: 0.6; }
+
+/* ---------- Account: sign in to sync, or who's signed in ---------- */
+.account-card { grid-column: 1 / -1; margin-top: 18px; }
+.account-copy { margin: 12px 0 4px; font-size: 15px; line-height: 1.5; color: var(--black); }
+.google-btn { gap: 10px; background: #fff; color: var(--black); border-color: var(--card-edge); }
+.google-btn:hover { background: #f4f4f4; }
+.google-g { width: 18px; height: 18px; flex: none; }
+
+.account-line {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 0;
+  font-family: var(--font-deck);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--on-felt-dim);
+}
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--on-felt-dim); }
+.sync-dot.synced { background: var(--gold); }
+.sync-dot.syncing { background: var(--gold); animation: pulse 1s ease-in-out infinite alternate; }
+.sync-dot.error { background: var(--red); }
+@keyframes pulse { to { opacity: 0.3; } }
+.link-btn {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-style: normal;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  cursor: pointer;
+}
+.link-btn:hover { text-decoration: underline; text-underline-offset: 3px; }

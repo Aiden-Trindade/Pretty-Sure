@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { formatDate, isOverdue } from "../utils/dates";
 import EmptyState from "../components/EmptyState";
 import InstallCard from "../components/InstallCard";
+import AccountCard from "../components/AccountCard";
 
-export default function Home({ calls = [] }) {
+export default function Home({ calls = [], account }) {
   return (
     <>
       <div className="slip-head">
@@ -50,6 +51,7 @@ export default function Home({ calls = [] }) {
         })
       )}
 
+      <AccountCard account={account} />
       <InstallCard />
     </>
   );

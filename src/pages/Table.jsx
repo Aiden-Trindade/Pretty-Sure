@@ -192,6 +192,7 @@ function NewTableCall({ tableId, members, me, onDone }) {
           <textarea
             value={text}
             maxLength={200}
+            placeholder="Make your bet"
             onChange={(e) => setText(e.target.value)}
             required
           />

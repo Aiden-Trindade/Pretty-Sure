@@ -95,6 +95,7 @@ export default function Tables({ account }) {
             <input
               value={name}
               maxLength={40}
+              placeholder="Name it something"
               onChange={(e) => setName(e.target.value)}
               required
             />

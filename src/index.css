@@ -825,3 +825,6 @@ a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
 
 /* Delete: quiet, in red ink, under the main actions */
 .slip .delete-btn { display: block; margin: var(--s4) 0 0; color: var(--red); }
+
+/* A form row with a single field takes the full width, even on phones */
+form.slip .boxes > .box:only-child { grid-column: 1 / -1; }

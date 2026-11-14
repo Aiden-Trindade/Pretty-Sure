@@ -95,7 +95,7 @@ export default function Tables({ account }) {
             <input
               value={name}
               maxLength={40}
-              placeholder="The group chat"
+              placeholder="100% attendance this week"
               onChange={(e) => setName(e.target.value)}
               required
             />

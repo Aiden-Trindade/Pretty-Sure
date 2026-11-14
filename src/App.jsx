@@ -5,7 +5,7 @@ import StyleGuide from "./pages/StyleGuide";
 import { getBalance } from "./utils/points";
 import { getParlaysChange } from "./utils/parlays";
 import { supabase } from "./lib/supabase";
-import { syncDeck, saveCalls, saveParlays } from "./utils/sync";
+import { syncDeck, saveCalls, saveParlays, deleteFromCloud } from "./utils/sync";
 import { myBets, getTablesChange } from "./utils/tables";
 
 // Page imports
@@ -188,6 +188,15 @@ export default function App() {
     if (call) push(() => saveCalls([{ ...call, outcome }]));
   }
 
+  // Delete a call here and in your account. A parlay can't stand with a leg
+  // missing, so any parlay using this call goes too.
+  function deleteCall(id) {
+    const brokenParlays = parlays.filter((p) => p.legIds.includes(id)).map((p) => p.id);
+    setCalls((prev) => prev.filter((c) => c.id !== id));
+    setParlays((prev) => prev.filter((p) => !brokenParlays.includes(p.id)));
+    push(() => deleteFromCloud([id], brokenParlays));
+  }
+
   function addParlay(parlay) {
     setParlays((prev) => [...prev, parlay]);
     push(() => saveParlays([parlay]));
@@ -204,7 +213,9 @@ export default function App() {
           <Route path="/new" element={<NewCall onAdd={addCall} balance={balance} calls={calls} />} />
           <Route
             path="/p/:id"
-            element={<Call calls={calls} onSettle={settleCall} balance={balance} />}
+            element={
+              <Call calls={calls} onSettle={settleCall} onDelete={deleteCall} balance={balance} />
+            }
           />
 
           <Route

@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import NotFound from "./NotFound";
 import { getReturn } from "../utils/points";
 import { formatDate } from "../utils/dates";
 import useTitle from "../utils/useTitle";
 
-export default function Call({ calls = [], onSettle, balance = 0 }) {
+export default function Call({ calls = [], onSettle, onDelete, balance = 0 }) {
   const { id } = useParams();
   const call = calls.find((c) => c.id === id);
   useTitle(call ? call.text : "Not found");
+
+  const navigate = useNavigate();
 
   // Only true right after a click, so the animation doesn't replay on every visit
   const [justSettled, setJustSettled] = useState(false);
@@ -18,6 +20,12 @@ export default function Call({ calls = [], onSettle, balance = 0 }) {
   }
 
   const settled = call.outcome !== null;
+
+  function handleDelete() {
+    if (!window.confirm("Delete this call? It's gone from every device and can't be undone.")) return;
+    onDelete(call.id);
+    navigate("/");
+  }
 
   function handleSettle(outcome) {
     setJustSettled(true);
@@ -90,6 +98,10 @@ export default function Call({ calls = [], onSettle, balance = 0 }) {
             Lost
           </button>
         </div>
+
+        <button className="link-btn delete-btn" type="button" onClick={handleDelete}>
+          Delete call
+        </button>
       </div>
 
       {/* Back Face */}
@@ -109,6 +121,10 @@ export default function Call({ calls = [], onSettle, balance = 0 }) {
         <Link className="btn" to="/">
           Back to your calls
         </Link>
+
+        <button className="link-btn delete-btn" type="button" onClick={handleDelete}>
+          Delete call
+        </button>
       </div>
     </div>
   );

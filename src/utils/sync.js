@@ -102,6 +102,17 @@ export async function saveParlays(parlays) {
   if (error) throw error;
 }
 
+// Remove calls (and parlays that used them) from the database
+export async function deleteFromCloud(callIds, parlayIds = []) {
+  if (!supabase) return;
+  if (parlayIds.length) {
+    const { error } = await supabase.from("parlays").delete().in("id", parlayIds);
+    if (error) throw error;
+  }
+  const { error } = await supabase.from("calls").delete().in("id", callIds);
+  if (error) throw error;
+}
+
 // Pull the database, merge with this device, push back anything only this device had
 export async function syncDeck(localCalls, localParlays) {
   const remote = await fetchDeck();

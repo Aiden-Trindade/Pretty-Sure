@@ -50,6 +50,7 @@ export default function NewCall({ onAdd, balance, calls = [] }) {
         <label className="box tall">
           <span className="label">Selection</span>
           <textarea
+            placeholder="Make your bet"
             value={text}
             onChange={(e) => setText(e.target.value)}
             required

@@ -6,7 +6,8 @@ const CARDS = [
   { to: "/", label: "Calls", suit: "♥", color: "red" },
   { to: "/new", label: "New", suit: "♠", color: "black" },
   { to: "/parlays", label: "Parlays", suit: "♦", color: "red" },
-  { to: "/stats", label: "Stats", suit: "♣", color: "black" },
+  { to: "/tables", label: "Friends", suit: "♣", color: "black" },
+  { to: "/stats", label: "Stats", suit: "♥", color: "red" },
 ];
 
 const DEVICE_KEY = "pretty_sure_device";

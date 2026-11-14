@@ -1,6 +1,8 @@
 import EmptyState from "../components/EmptyState";
+import useTitle from "../utils/useTitle";
 
 export default function NotFound() {
+  useTitle("Not found");
   return (
     <EmptyState
       suit="♠"

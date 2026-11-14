@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import StyleGuide from "./pages/StyleGuide";
@@ -6,6 +6,7 @@ import { getBalance } from "./utils/points";
 import { getParlaysChange } from "./utils/parlays";
 import { supabase } from "./lib/supabase";
 import { syncDeck, saveCalls, saveParlays } from "./utils/sync";
+import { myBets, getTablesChange } from "./utils/tables";
 
 // Page imports
 import Home from "./pages/Home";
@@ -15,6 +16,9 @@ import Stats from "./pages/Stats";
 import NotFound from "./pages/NotFound";
 import Parlays from "./pages/Parlays";
 import Privacy from "./pages/Privacy";
+import Tables from "./pages/Tables";
+import Table from "./pages/Table";
+import Join from "./pages/Join";
 
 const STORAGE_KEY = "pretty_sure_calls";
 const PARLAYS_KEY = "pretty_sure_parlays";
@@ -49,6 +53,19 @@ export default function App() {
   const [syncState, setSyncState] = useState("off"); // off | syncing | synced | error
   const [onlineTick, setOnlineTick] = useState(0);
   const userId = session?.user?.id;
+
+  // Chips won, lost or riding on bets at friends' tables
+  const [tablesChange, setTablesChange] = useState(0);
+  const refreshBank = useCallback(() => {
+    if (!userId) return;
+    myBets(userId)
+      .then((bets) => setTablesChange(getTablesChange(bets)))
+      .catch((error) => console.warn("Couldn't load table bets:", error.message));
+  }, [userId]);
+
+  useEffect(() => {
+    refreshBank();
+  }, [userId, refreshBank]);
 
   // The sync effect needs the latest deck without re-running on every change
   const deckRef = useRef({ calls, parlays });
@@ -111,7 +128,8 @@ export default function App() {
   function signIn() {
     supabase?.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/" },
+      // Come back to the same page, so an invite link still works after sign-in
+      options: { redirectTo: window.location.origin + window.location.pathname },
     });
   }
 
@@ -146,7 +164,10 @@ export default function App() {
     }
   }, [parlays]);
 
-  const balance = getBalance(calls) + getParlaysChange(parlays, calls);
+  const balance =
+    getBalance(calls) +
+    getParlaysChange(parlays, calls) +
+    (userId ? tablesChange : 0); // signed out: only this device's calls count
 
   function addCall(call) {
     setCalls((prev) => [...prev, call]);
@@ -193,6 +214,12 @@ export default function App() {
           />
           
           <Route path="/stats" element={<Stats calls={calls} balance={balance} />} />
+          <Route path="/tables" element={<Tables account={account} />} />
+          <Route
+            path="/t/:id"
+            element={<Table account={account} balance={balance} onBank={refreshBank} />}
+          />
+          <Route path="/join/:code" element={<Join account={account} />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

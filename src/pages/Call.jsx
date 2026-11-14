@@ -3,10 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import NotFound from "./NotFound";
 import { getReturn } from "../utils/points";
 import { formatDate } from "../utils/dates";
+import useTitle from "../utils/useTitle";
 
 export default function Call({ calls = [], onSettle, balance = 0 }) {
   const { id } = useParams();
   const call = calls.find((c) => c.id === id);
+  useTitle(call ? call.text : "Not found");
 
   // Only true right after a click, so the animation doesn't replay on every visit
   const [justSettled, setJustSettled] = useState(false);
@@ -105,7 +107,7 @@ export default function Call({ calls = [], onSettle, balance = 0 }) {
         )}
 
         <Link className="btn" to="/">
-          Back to your hand
+          Back to your calls
         </Link>
       </div>
     </div>

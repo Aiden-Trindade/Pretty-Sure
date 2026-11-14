@@ -3,8 +3,10 @@ import { formatDate, isOverdue } from "../utils/dates";
 import EmptyState from "../components/EmptyState";
 import InstallCard from "../components/InstallCard";
 import AccountCard from "../components/AccountCard";
+import useTitle from "../utils/useTitle";
 
 export default function Home({ calls = [], account }) {
+  useTitle("Your calls");
   return (
     <>
       <div className="slip-head">

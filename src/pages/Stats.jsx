@@ -1,8 +1,10 @@
 import { getSettled, getWinRate, getCalibration } from "../utils/stats";
 import CalibrationChart from "../components/CalibrationChart";
 import EmptyState from "../components/EmptyState";
+import useTitle from "../utils/useTitle";
 
 export default function Stats({ calls = [], balance = 0 }) {
+  useTitle("Stats");
   const settled = getSettled(calls);
   const wonCount = settled.filter((c) => c.outcome === true).length;
   const lostCount = settled.filter((c) => c.outcome === false).length;

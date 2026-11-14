@@ -1,7 +1,10 @@
+import useTitle from "../utils/useTitle";
+
 // Reference page for the slip design. Open /style to see every class in use.
 // Copy the markup you need into your own components.
 
 export default function StyleGuide() {
+  useTitle("Style guide");
   return (
     <>
       <div className="slip">

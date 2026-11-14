@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getReturn } from "../utils/points";
+import useTitle from "../utils/useTitle";
 
 export default function NewCall({ onAdd, balance, calls = [] }) {
+  useTitle("Make a call");
   const [searchParams] = useSearchParams();
   const parent = calls.find((c) => c.id === searchParams.get("from"));
 

@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import useTitle from "../utils/useTitle";
 
 // Linked from Google's sign-in screen. Plain words: what's kept, where, and how to remove it.
 export default function Privacy() {
+  useTitle("Privacy");
   return (
     <article className="slip privacy">
       <div className="slip-head">

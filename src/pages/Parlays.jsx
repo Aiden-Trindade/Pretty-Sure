@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { getLegs, getParlayOutcome, getParlayReturn } from "../utils/parlays";
 import EmptyState from "../components/EmptyState";
+import useTitle from "../utils/useTitle";
 
 export default function Parlays({ calls = [], parlays = [], balance = 0, onAdd }) {
+  useTitle("Parlays");
   const [picked, setPicked] = useState([]);
   const [stake, setStake] = useState(0);
 

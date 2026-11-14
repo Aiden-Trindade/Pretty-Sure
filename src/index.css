@@ -29,7 +29,9 @@
   --font-deck: 'Bodoni Moda', 'Didot', Georgia, serif;
   --font-ui: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif;
 
-  color-scheme: dark;
+  /* "only light": the app picks its own colours, so phones in dark mode must not
+     invert the cards (Chrome's "darken websites" and similar) */
+  color-scheme: only light;
 }
 
 * { box-sizing: border-box; }

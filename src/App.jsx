@@ -63,8 +63,14 @@ export default function App() {
       .catch((error) => console.warn("Couldn't load table bets:", error.message));
   }, [userId]);
 
+  // ...and again whenever you come back to the app, in case a friend settled a call
   useEffect(() => {
     refreshBank();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refreshBank();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [userId, refreshBank]);
 
   // The sync effect needs the latest deck without re-running on every change

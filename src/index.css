@@ -818,3 +818,5 @@ a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
 
 /* The table's host: a small crown icon, drawn as SVG rather than an emoji */
 .host-icon { width: 13px; height: 13px; fill: var(--gold); }
+
+.closed-note { margin: var(--s4) 0 0; font-size: 14px; color: var(--black); opacity: 0.7; }

@@ -54,8 +54,14 @@ export function inviteLink(table) {
   return `${window.location.origin}/join/${table.invite_code}`;
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 // Everything one table's page needs, in one go
 export async function tableDetails(id) {
+  // A mistyped link isn't a valid id, and Postgres would reject it with an error.
+  // It's really just "no such table".
+  if (!UUID.test(id)) return { table: null, members: [], calls: [], bets: [] };
+
   const [table, members, calls, bets] = await Promise.all([
     supabase.from("tables").select("*").eq("id", id).maybeSingle(),
     supabase.from("table_members").select("*").eq("table_id", id).order("joined_at"),
@@ -98,6 +104,13 @@ export async function settleTableCall(callId, result) {
   return unwrap(
     await supabase.rpc("settle_table_call", { c: callId, result })
   );
+}
+
+// Betting closes when the settle date arrives, so nobody bets after seeing the result
+export function bettingOpen(call) {
+  if (call.outcome !== null) return false;
+  if (!call.due_date) return true;
+  return call.due_date > new Date().toLocaleDateString("en-CA");
 }
 
 // ---- Pools and the bank ----

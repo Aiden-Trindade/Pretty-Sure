@@ -10,6 +10,7 @@ import {
   settleTableCall,
   inviteLink,
   getPools,
+  bettingOpen,
   listenToTables,
 } from "../utils/tables";
 import useTitle from "../utils/useTitle";
@@ -302,7 +303,11 @@ function TableCall({ call, bets, me, nameOf, balance, onDone }) {
         </ul>
       )}
 
-      {open && !mine && (
+      {open && !mine && !bettingOpen(call) && (
+        <p className="fine-print closed-note">Betting closed on the settle date.</p>
+      )}
+
+      {open && !mine && bettingOpen(call) && (
         <div className="bet-row">
           <label className="box stake-box">
             <span className="label">Stake</span>

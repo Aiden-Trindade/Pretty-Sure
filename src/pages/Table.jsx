@@ -192,7 +192,7 @@ function NewTableCall({ tableId, members, me, onDone }) {
           <textarea
             value={text}
             maxLength={200}
-            placeholder="5K under 30 by Saturday"
+            placeholder="100% attendance this week"
             onChange={(e) => setText(e.target.value)}
             required
           />

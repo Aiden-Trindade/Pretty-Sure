@@ -73,6 +73,20 @@ export default function Table({ account, balance = 0, onBank }) {
   const nameOf = (userId) =>
     userId === me ? "You" : members.find((m) => m.user_id === userId)?.name ?? "Someone";
 
+  const openCalls = calls.filter((call) => call.outcome === null);
+  const settledCalls = calls.filter((call) => call.outcome !== null);
+  const renderCall = (call) => (
+    <TableCall
+      key={call.id}
+      call={call}
+      bets={bets.filter((b) => b.call_id === call.id)}
+      me={me}
+      nameOf={nameOf}
+      balance={balance}
+      onDone={refresh}
+    />
+  );
+
   // After you do something, reload the table and the bank straight away
   // (realtime would catch it too, but this feels instant)
   function refresh() {
@@ -109,17 +123,17 @@ export default function Table({ account, balance = 0, onBank }) {
           text="Put one up above, about anyone sitting here."
         />
       ) : (
-        calls.map((call) => (
-          <TableCall
-            key={call.id}
-            call={call}
-            bets={bets.filter((b) => b.call_id === call.id)}
-            me={me}
-            nameOf={nameOf}
-            balance={balance}
-            onDone={refresh}
-          />
-        ))
+        <>
+          {openCalls.map(renderCall)}
+
+          {/* Settled calls go in their own pile, under the ones still in play */}
+          {settledCalls.length > 0 && (
+            <div className="slip-head">
+              <span className="title">Settled</span>
+            </div>
+          )}
+          {settledCalls.map(renderCall)}
+        </>
       )}
 
       <div className="actions">

@@ -599,7 +599,9 @@ a.slip .box:nth-child(3) .entry {
 
 /* Overdue: an open call past its settle date gets a red ink stamp.
    Stamps sit in the flow just above the card's text, never on top of it. */
-a.slip.overdue .box:nth-child(1)::before {
+a.slip.overdue .box:nth-child(1)::before,
+a.slip.won .box:nth-child(1)::before,
+a.slip.lost .box:nth-child(1)::before {
   content: "Late";
   align-self: center;
   margin-bottom: var(--s3);
@@ -617,6 +619,12 @@ a.slip.overdue .box:nth-child(1)::before {
   mix-blend-mode: multiply;
 }
 a.slip.overdue .box:nth-child(3) .entry { text-decoration: underline 2px; }
+
+/* Settled calls: the same stamp, Won in black ink, Lost in red */
+a.slip.won .box:nth-child(1)::before { content: "Won"; border-color: var(--black); color: var(--black); }
+a.slip.lost .box:nth-child(1)::before { content: "Lost"; }
+a.slip.won, a.slip.lost { opacity: 0.85; }
+a.slip.lost .entry { opacity: 1; }
 
 /* ---------- Empty states: one centred card with a big suit, a line, and one action ---------- */
 .slip.empty {

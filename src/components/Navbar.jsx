@@ -26,27 +26,38 @@ function getDeviceId() {
   }
 }
 
+// Robots load the site too: Vercel's preview of each deploy, link scanners,
+// search crawlers. They shouldn't count as players.
+function isRobot() {
+  return (
+    navigator.webdriver ||
+    /bot|crawl|spider|headless|vercel|lighthouse|preview/i.test(navigator.userAgent)
+  );
+}
+
 export default function Navbar({ balance = 0 }) {
   const [player, setPlayer] = useState(null);
   const [revealed, setRevealed] = useState(false);
 
   // Easter egg: join the player count once, and learn this device's number
   useEffect(() => {
+    if (!supabase || isRobot()) return;
     const deviceId = getDeviceId();
-    if (!supabase || !deviceId) return;
+    if (!deviceId) return;
 
     let cancelled = false;
 
     async function load() {
       const { data, error } = await supabase.rpc("join_players", {
         device_id: deviceId,
+        agent: navigator.userAgent, // so a new row shows what opened the app
       });
       if (cancelled) return;
       if (error) {
         console.warn("Player count unavailable:", error.message);
         return;
       }
-      if (data?.[0]) setPlayer(data[0]);
+      if (data?.[0]?.player_number != null) setPlayer(data[0]);
     }
 
     load();
